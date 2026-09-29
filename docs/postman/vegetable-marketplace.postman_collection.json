@@ -1,0 +1,6103 @@
+{
+  "info": {
+    "name": "Farmer Wholesale Vegetable Marketplace",
+    "description": "All /api/v1 endpoints. Authorize requests with the access token returned by Login.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "farmerId",
+      "value": ""
+    },
+    {
+      "key": "buyerId",
+      "value": ""
+    },
+    {
+      "key": "listingId",
+      "value": ""
+    },
+    {
+      "key": "offerId",
+      "value": ""
+    },
+    {
+      "key": "orderId",
+      "value": ""
+    },
+    {
+      "key": "marketId",
+      "value": ""
+    },
+    {
+      "key": "cropId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Process health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ],
+              "query": []
+            },
+            "description": "Process health",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Database health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health/database",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health",
+                "database"
+              ],
+              "query": []
+            },
+            "description": "Database health",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Redis health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health/redis",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health",
+                "redis"
+              ],
+              "query": []
+            },
+            "description": "Redis health",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register a user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ],
+              "query": []
+            },
+            "description": "Register a user",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rabi Mondal\",\n  \"phone\": \"9876543210\",\n  \"password\": \"Farmer@123\",\n  \"role\": \"FARMER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Log in",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ],
+              "query": []
+            },
+            "description": "Log in",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"9876543210\",\n  \"password\": \"Farmer@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.accessToken) pm.collectionVariables.set(\"accessToken\", body.data.accessToken);",
+                  "if (body.data && body.data.refreshToken) pm.collectionVariables.set(\"refreshToken\", body.data.refreshToken);",
+                  "if (body.data && body.data.user && body.data.user._id) pm.collectionVariables.set(\"userId\", body.data.user._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Rotate refresh token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh-token"
+              ],
+              "query": []
+            },
+            "description": "Rotate refresh token",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Log out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "logout"
+              ],
+              "query": []
+            },
+            "description": "Log out",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Request a password reset code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "forgot-password"
+              ],
+              "query": []
+            },
+            "description": "Request a password reset code",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Reset password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/reset-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "reset-password"
+              ],
+              "query": []
+            },
+            "description": "Reset password",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"string\",\n  \"code\": \"string\",\n  \"newPassword\": \"Farmer@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Verify phone",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/verify-phone",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "verify-phone"
+              ],
+              "query": []
+            },
+            "description": "Verify phone",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"code\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Verify email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/verify-email",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "verify-email"
+              ],
+              "query": []
+            },
+            "description": "Verify email",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"string\",\n  \"code\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get current user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me"
+              ],
+              "query": []
+            },
+            "description": "Get current user",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update current user",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me"
+              ],
+              "query": []
+            },
+            "description": "Update current user",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"string\",\n  \"email\": \"string\",\n  \"profileImage\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update current location",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/me/location",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me",
+                "location"
+              ],
+              "query": []
+            },
+            "description": "Update current location",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"longitude\": 88.48,\n  \"latitude\": 22.72,\n  \"address\": \"string\",\n  \"village\": \"string\",\n  \"district\": \"string\",\n  \"state\": \"string\",\n  \"pincode\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Change password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/me/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me",
+                "change-password"
+              ],
+              "query": []
+            },
+            "description": "Change password",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"string\",\n  \"newPassword\": \"Farmer@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "List reviews for a user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{userId}/reviews?page&limit&sortOrder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "{userId}",
+                "reviews"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List reviews for a user",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Review a completed order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews"
+              ],
+              "query": []
+            },
+            "description": "Review a completed order",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"674a1b2c3d4e5f6789012345\",\n  \"rating\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Farmers",
+      "item": [
+        {
+          "name": "Create farmer profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/farmers/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "farmers",
+                "profile"
+              ],
+              "query": []
+            },
+            "description": "Create farmer profile",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmerName\": \"Rabi Mondal\",\n  \"phone\": \"9876543210\",\n  \"address\": \"string\",\n  \"district\": \"North 24 Parganas\",\n  \"state\": \"West Bengal\",\n  \"pincode\": \"743273\",\n  \"location\": {\n    \"longitude\": 88.48,\n    \"latitude\": 22.72\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get my farmer profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/farmers/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "farmers",
+                "profile"
+              ],
+              "query": []
+            },
+            "description": "Get my farmer profile",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update my farmer profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/farmers/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "farmers",
+                "profile"
+              ],
+              "query": []
+            },
+            "description": "Update my farmer profile",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmerName\": \"Rabi Mondal\",\n  \"phone\": \"9876543210\",\n  \"address\": \"string\",\n  \"district\": \"North 24 Parganas\",\n  \"state\": \"West Bengal\",\n  \"pincode\": \"743273\",\n  \"location\": {\n    \"longitude\": 88.48,\n    \"latitude\": 22.72\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Find nearby farmers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/farmers/nearby?page&limit&sortOrder&lat&lng&radius",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "farmers",
+                "nearby"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "lat",
+                  "value": "22.72",
+                  "disabled": true
+                },
+                {
+                  "key": "lng",
+                  "value": "88.48",
+                  "disabled": true
+                },
+                {
+                  "key": "radius",
+                  "value": "20000",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Find nearby farmers",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Get a farmer profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/farmers/{farmerId}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "farmers",
+                "{farmerId}"
+              ],
+              "query": []
+            },
+            "description": "Get a farmer profile",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listings",
+      "item": [
+        {
+          "name": "List my listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/farmers/me/listings?page&limit&sortOrder&sortBy&crop&cropId&marketId&district&farmer&farmerId&fpo&fpoId&minPrice&maxPrice&minQuantity&quality&qualityGrade&availableFrom&availableUntil&status&q&lat&lng&radius",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "farmers",
+                "me",
+                "listings"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "disabled": true
+                },
+                {
+                  "key": "crop",
+                  "value": "tomato",
+                  "disabled": true
+                },
+                {
+                  "key": "cropId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "marketId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "North 24 Parganas",
+                  "disabled": true
+                },
+                {
+                  "key": "farmer",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "farmerId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "fpo",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "fpoId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "minQuantity",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "quality",
+                  "value": "A",
+                  "disabled": true
+                },
+                {
+                  "key": "qualityGrade",
+                  "value": "A",
+                  "disabled": true
+                },
+                {
+                  "key": "availableFrom",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "availableUntil",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "DRAFT",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "lat",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "lng",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "radius",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List my listings",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create a listing",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings"
+              ],
+              "query": []
+            },
+            "description": "Create a listing",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropId\": \"674a1b2c3d4e5f6789012345\",\n  \"fpoId\": \"674a1b2c3d4e5f6789012345\",\n  \"quantity\": 800,\n  \"unit\": \"KG\",\n  \"qualityGrade\": \"A\",\n  \"expectedPrice\": 28,\n  \"harvestDate\": \"2026-10-01\",\n  \"availableFrom\": \"2026-10-01T06:00:00.000Z\",\n  \"availableUntil\": \"2026-10-02T18:00:00.000Z\",\n  \"marketId\": \"674a1b2c3d4e5f6789012345\",\n  \"preferredMarketId\": \"674a1b2c3d4e5f6789012345\",\n  \"isNegotiable\": true,\n  \"allowBidding\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Search listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings?page&limit&sortOrder&sortBy&crop&cropId&marketId&district&farmer&farmerId&fpo&fpoId&minPrice&maxPrice&minQuantity&quality&qualityGrade&availableFrom&availableUntil&status&q&lat&lng&radius",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "disabled": true
+                },
+                {
+                  "key": "crop",
+                  "value": "tomato",
+                  "disabled": true
+                },
+                {
+                  "key": "cropId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "marketId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "North 24 Parganas",
+                  "disabled": true
+                },
+                {
+                  "key": "farmer",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "farmerId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "fpo",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "fpoId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "minQuantity",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "quality",
+                  "value": "A",
+                  "disabled": true
+                },
+                {
+                  "key": "qualityGrade",
+                  "value": "A",
+                  "disabled": true
+                },
+                {
+                  "key": "availableFrom",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "availableUntil",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "DRAFT",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "lat",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "lng",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "radius",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Search listings",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Nearby listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/nearby?page&limit&sortOrder&lat&lng&radius&crop&status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "nearby"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "lat",
+                  "value": "22.72",
+                  "disabled": true
+                },
+                {
+                  "key": "lng",
+                  "value": "88.48",
+                  "disabled": true
+                },
+                {
+                  "key": "radius",
+                  "value": "20000",
+                  "disabled": true
+                },
+                {
+                  "key": "crop",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Nearby listings",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Text search listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/search?page&limit&sortOrder&sortBy&crop&cropId&marketId&district&farmer&farmerId&fpo&fpoId&minPrice&maxPrice&minQuantity&quality&qualityGrade&availableFrom&availableUntil&status&q&lat&lng&radius",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "disabled": true
+                },
+                {
+                  "key": "crop",
+                  "value": "tomato",
+                  "disabled": true
+                },
+                {
+                  "key": "cropId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "marketId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "North 24 Parganas",
+                  "disabled": true
+                },
+                {
+                  "key": "farmer",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "farmerId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "fpo",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "fpoId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "minQuantity",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "quality",
+                  "value": "A",
+                  "disabled": true
+                },
+                {
+                  "key": "qualityGrade",
+                  "value": "A",
+                  "disabled": true
+                },
+                {
+                  "key": "availableFrom",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "availableUntil",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "DRAFT",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "lat",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "lng",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "radius",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Text search listings",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Get a listing",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Get a listing",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Update a listing",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Update a listing",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropId\": \"674a1b2c3d4e5f6789012345\",\n  \"fpoId\": \"674a1b2c3d4e5f6789012345\",\n  \"quantity\": 800,\n  \"unit\": \"KG\",\n  \"qualityGrade\": \"A\",\n  \"expectedPrice\": 28,\n  \"harvestDate\": \"2026-10-01\",\n  \"availableFrom\": \"2026-10-01T06:00:00.000Z\",\n  \"availableUntil\": \"2026-10-02T18:00:00.000Z\",\n  \"marketId\": \"674a1b2c3d4e5f6789012345\",\n  \"preferredMarketId\": \"674a1b2c3d4e5f6789012345\",\n  \"isNegotiable\": true,\n  \"allowBidding\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete a listing",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Delete a listing",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Publish a listing",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{id}/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{id}",
+                "publish"
+              ],
+              "query": []
+            },
+            "description": "Publish a listing",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cancel a listing",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{id}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{id}",
+                "cancel"
+              ],
+              "query": []
+            },
+            "description": "Cancel a listing",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Buyers",
+      "item": [
+        {
+          "name": "Create buyer profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/buyers/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "buyers",
+                "profile"
+              ],
+              "query": []
+            },
+            "description": "Create buyer profile",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessName\": \"Bapi Traders\",\n  \"businessType\": \"WHOLESALER\",\n  \"ownerName\": \"string\",\n  \"phone\": \"9876543210\",\n  \"address\": \"string\",\n  \"district\": \"Kolkata\",\n  \"location\": {\n    \"longitude\": 88.48,\n    \"latitude\": 22.72\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get my buyer profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/buyers/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "buyers",
+                "profile"
+              ],
+              "query": []
+            },
+            "description": "Get my buyer profile",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update my buyer profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/buyers/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "buyers",
+                "profile"
+              ],
+              "query": []
+            },
+            "description": "Update my buyer profile",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessName\": \"Bapi Traders\",\n  \"businessType\": \"WHOLESALER\",\n  \"ownerName\": \"string\",\n  \"phone\": \"9876543210\",\n  \"address\": \"string\",\n  \"district\": \"Kolkata\",\n  \"location\": {\n    \"longitude\": 88.48,\n    \"latitude\": 22.72\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Find nearby buyers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/buyers/nearby?page&limit&sortOrder&lat&lng&radius",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "buyers",
+                "nearby"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "lat",
+                  "value": "22.72",
+                  "disabled": true
+                },
+                {
+                  "key": "lng",
+                  "value": "88.48",
+                  "disabled": true
+                },
+                {
+                  "key": "radius",
+                  "value": "20000",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Find nearby buyers",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Get a buyer profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/buyers/{buyerId}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "buyers",
+                "{buyerId}"
+              ],
+              "query": []
+            },
+            "description": "Get a buyer profile",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "FPOs",
+      "item": [
+        {
+          "name": "Create an FPO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fpos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "fpos"
+              ],
+              "query": []
+            },
+            "description": "Create an FPO",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Gaighata Vegetable FPO\",\n  \"registrationNumber\": \"string\",\n  \"contactPerson\": \"string\",\n  \"phone\": \"9876543210\",\n  \"address\": \"string\",\n  \"district\": \"string\",\n  \"location\": {\n    \"longitude\": 88.48,\n    \"latitude\": 22.72\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List FPOs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fpos?page&limit&sortOrder&sortBy&status&q&district",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "fpos"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List FPOs",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Get an FPO",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fpos/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "fpos",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Get an FPO",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Update an FPO",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fpos/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "fpos",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Update an FPO",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Gaighata Vegetable FPO\",\n  \"registrationNumber\": \"string\",\n  \"description\": \"string\",\n  \"contactPerson\": \"string\",\n  \"phone\": \"9876543210\",\n  \"email\": \"string\",\n  \"address\": \"string\",\n  \"village\": \"string\",\n  \"block\": \"string\",\n  \"district\": \"string\",\n  \"state\": \"string\",\n  \"pincode\": \"string\",\n  \"location\": {\n    \"longitude\": 88.48,\n    \"latitude\": 22.72\n  },\n  \"primaryCrops\": [\n    \"674a1b2c3d4e5f6789012345\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Add an FPO member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fpos/{id}/members",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "fpos",
+                "{id}",
+                "members"
+              ],
+              "query": []
+            },
+            "description": "Add an FPO member",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmerId\": \"674a1b2c3d4e5f6789012345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List FPO members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fpos/{id}/members?page&limit&sortOrder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "fpos",
+                "{id}",
+                "members"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List FPO members",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Remove an FPO member",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fpos/{id}/members/{farmerId}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "fpos",
+                "{id}",
+                "members",
+                "{farmerId}"
+              ],
+              "query": []
+            },
+            "description": "Remove an FPO member",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Markets",
+      "item": [
+        {
+          "name": "Create a market",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/markets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "markets"
+              ],
+              "query": []
+            },
+            "description": "Create a market",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Barasat Krishak Bazar\",\n  \"marketCode\": \"N24-BARASAT\",\n  \"marketType\": \"MANDI\",\n  \"address\": \"string\",\n  \"district\": \"North 24 Parganas\",\n  \"location\": {\n    \"longitude\": 88.48,\n    \"latitude\": 22.72\n  },\n  \"openingTime\": \"06:00\",\n  \"closingTime\": \"14:00\",\n  \"commissionRate\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List markets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/markets?page&limit&sortOrder&sortBy&status&q&district&marketType",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "markets"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "name",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "marketType",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List markets",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Find nearby markets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/markets/nearby?page&limit&sortOrder&lat&lng&radius",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "markets",
+                "nearby"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "lat",
+                  "value": "22.72",
+                  "disabled": true
+                },
+                {
+                  "key": "lng",
+                  "value": "88.48",
+                  "disabled": true
+                },
+                {
+                  "key": "radius",
+                  "value": "20000",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Find nearby markets",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Get a market",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/markets/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "markets",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Get a market",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Update a market",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/markets/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "markets",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Update a market",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Barasat Krishak Bazar\",\n  \"marketCode\": \"N24-BARASAT\",\n  \"marketType\": \"MANDI\",\n  \"address\": \"string\",\n  \"village\": \"string\",\n  \"block\": \"string\",\n  \"district\": \"North 24 Parganas\",\n  \"state\": \"string\",\n  \"pincode\": \"string\",\n  \"location\": {\n    \"longitude\": 88.48,\n    \"latitude\": 22.72\n  },\n  \"operatingDays\": [\n    \"MONDAY\"\n  ],\n  \"openingTime\": \"06:00\",\n  \"closingTime\": \"14:00\",\n  \"commodities\": [\n    \"674a1b2c3d4e5f6789012345\"\n  ],\n  \"commissionRate\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Market Prices",
+      "item": [
+        {
+          "name": "Prices at a market",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/markets/{id}/prices?page&limit&sortOrder&cropId&from&to",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "markets",
+                "{id}",
+                "prices"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "cropId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Prices at a market",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Record a market price",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/market-prices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "market-prices"
+              ],
+              "query": []
+            },
+            "description": "Record a market price",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropId\": \"674a1b2c3d4e5f6789012345\",\n  \"marketId\": \"674a1b2c3d4e5f6789012345\",\n  \"date\": \"2026-10-01\",\n  \"minimumPrice\": 28,\n  \"maximumPrice\": 34,\n  \"modalPrice\": 31\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List market prices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/market-prices?page&limit&sortOrder&cropId&marketId&from&to",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "market-prices"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "cropId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "marketId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List market prices",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Price history for a crop",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/market-prices/{cropId}?page&limit&sortOrder&marketId&from&to",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "market-prices",
+                "{cropId}"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "marketId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Price history for a crop",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Crops",
+      "item": [
+        {
+          "name": "Create a crop",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/crops",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "crops"
+              ],
+              "query": []
+            },
+            "description": "Create a crop",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tomato\",\n  \"bengaliName\": \"টমেটো\",\n  \"category\": \"VEGETABLE\",\n  \"season\": \"RABI\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List crops",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/crops?page&limit&sortOrder&sortBy&status&q&category",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "crops"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "name",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "category",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List crops",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Get a crop",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/crops/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "crops",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Get a crop",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Update a crop",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/crops/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "crops",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Update a crop",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tomato\",\n  \"localNames\": [\n    \"string\"\n  ],\n  \"bengaliName\": \"টমেটো\",\n  \"category\": \"VEGETABLE\",\n  \"unit\": \"KG\",\n  \"image\": \"string\",\n  \"description\": \"string\",\n  \"season\": \"RABI\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Offers",
+      "item": [
+        {
+          "name": "Make an offer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{listingId}/offers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{listingId}",
+                "offers"
+              ],
+              "query": []
+            },
+            "description": "Make an offer",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"offeredPrice\": 26,\n  \"quantity\": 500\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List offers on a listing",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/listings/{listingId}/offers?page&limit&sortOrder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "listings",
+                "{listingId}",
+                "offers"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List offers on a listing",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "My offers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/offers/my?page&limit&sortOrder&status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "offers",
+                "my"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "My offers",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Offers received",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/offers/received?page&limit&sortOrder&status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "offers",
+                "received"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Offers received",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Accept an offer",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/offers/{id}/accept",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "offers",
+                "{id}",
+                "accept"
+              ],
+              "query": []
+            },
+            "description": "Accept an offer",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reject an offer",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/offers/{id}/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "offers",
+                "{id}",
+                "reject"
+              ],
+              "query": []
+            },
+            "description": "Reject an offer",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Counter an offer",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/offers/{id}/counter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "offers",
+                "{id}",
+                "counter"
+              ],
+              "query": []
+            },
+            "description": "Counter an offer",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"offeredPrice\": 1,\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Cancel an offer",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/offers/{id}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "offers",
+                "{id}",
+                "cancel"
+              ],
+              "query": []
+            },
+            "description": "Cancel an offer",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Requirements",
+      "item": [
+        {
+          "name": "Post a purchase requirement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/requirements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "requirements"
+              ],
+              "query": []
+            },
+            "description": "Post a purchase requirement",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropId\": \"674a1b2c3d4e5f6789012345\",\n  \"quantity\": 1000,\n  \"unit\": \"KG\",\n  \"targetPrice\": 30,\n  \"requiredDate\": \"2026-10-01\",\n  \"marketId\": \"674a1b2c3d4e5f6789012345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List requirements",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/requirements?page&limit&sortOrder&sortBy&status&q&cropId&marketId&district&mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "requirements"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "cropId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "marketId",
+                  "value": "674a1b2c3d4e5f6789012345",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "mine",
+                  "value": "true",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List requirements",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get a requirement",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/requirements/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "requirements",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Get a requirement",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update a requirement",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/requirements/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "requirements",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Update a requirement",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropId\": \"674a1b2c3d4e5f6789012345\",\n  \"quantity\": 1000,\n  \"unit\": \"KG\",\n  \"targetPrice\": 30,\n  \"qualityGrade\": \"A\",\n  \"requiredDate\": \"2026-10-01\",\n  \"marketId\": \"674a1b2c3d4e5f6789012345\",\n  \"district\": \"string\",\n  \"state\": \"string\",\n  \"location\": {\n    \"longitude\": 88.48,\n    \"latitude\": 22.72\n  },\n  \"notes\": \"string\",\n  \"expiresAt\": \"string\",\n  \"status\": \"OPEN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Cancel a requirement",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/requirements/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "requirements",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Cancel a requirement",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Buy a listing directly",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders"
+              ],
+              "query": []
+            },
+            "description": "Buy a listing directly",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"listingId\": \"674a1b2c3d4e5f6789012345\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List my orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders?page&limit&sortOrder&status&sortBy",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List my orders",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get an order",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Get an order",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Change order status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{id}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "{id}",
+                "status"
+              ],
+              "query": []
+            },
+            "description": "Change order status",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PENDING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Cancel an order",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{id}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "{id}",
+                "cancel"
+              ],
+              "query": []
+            },
+            "description": "Cancel an order",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Confirm an order",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{id}/confirm",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "{id}",
+                "confirm"
+              ],
+              "query": []
+            },
+            "description": "Confirm an order",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Complete an order",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/{id}/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "{id}",
+                "complete"
+              ],
+              "query": []
+            },
+            "description": "Complete an order",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create a payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "create"
+              ],
+              "query": []
+            },
+            "description": "Create a payment",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"674a1b2c3d4e5f6789012345\",\n  \"method\": \"CASH\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Verify a payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "verify"
+              ],
+              "query": []
+            },
+            "description": "Verify a payment",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentId\": \"674a1b2c3d4e5f6789012345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Payment webhook",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments/webhook",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "webhook"
+              ],
+              "query": []
+            },
+            "description": "Payment webhook",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Get a payment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Get a payment",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Refund a payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments/{id}/refund",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "{id}",
+                "refund"
+              ],
+              "query": []
+            },
+            "description": "Refund a payment",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1,\n  \"reason\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Deliveries",
+      "item": [
+        {
+          "name": "Create a delivery",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/deliveries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "deliveries"
+              ],
+              "query": []
+            },
+            "description": "Create a delivery",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"674a1b2c3d4e5f6789012345\",\n  \"dropAddress\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List unassigned deliveries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/deliveries/available?page&limit&sortOrder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "deliveries",
+                "available"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List unassigned deliveries",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get a delivery",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/deliveries/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "deliveries",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Get a delivery",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update delivery status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/deliveries/{id}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "deliveries",
+                "{id}",
+                "status"
+              ],
+              "query": []
+            },
+            "description": "Update delivery status",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"REQUESTED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Assign a transporter",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/deliveries/{id}/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "deliveries",
+                "{id}",
+                "assign"
+              ],
+              "query": []
+            },
+            "description": "Assign a transporter",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transporterId\": \"674a1b2c3d4e5f6789012345\",\n  \"vehicleId\": \"674a1b2c3d4e5f6789012345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Create transporter profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transporters/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "transporters",
+                "profile"
+              ],
+              "query": []
+            },
+            "description": "Create transporter profile",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessName\": \"string\",\n  \"phone\": \"9876543210\",\n  \"vehicleTypes\": [\n    \"PICKUP\"\n  ],\n  \"vehicles\": [\n    {\n      \"vehicleNumber\": \"string\",\n      \"vehicleType\": \"PICKUP\",\n      \"capacity\": 1,\n      \"driverName\": \"string\",\n      \"driverPhone\": \"9876543210\"\n    }\n  ],\n  \"serviceAreas\": [\n    {\n      \"district\": \"string\"\n    }\n  ],\n  \"location\": {\n    \"longitude\": 88.48,\n    \"latitude\": 22.72\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get transporter profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transporters/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "transporters",
+                "profile"
+              ],
+              "query": []
+            },
+            "description": "Get transporter profile",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update transporter profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transporters/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "transporters",
+                "profile"
+              ],
+              "query": []
+            },
+            "description": "Update transporter profile",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessName\": \"string\",\n  \"phone\": \"9876543210\",\n  \"vehicleTypes\": [\n    \"PICKUP\"\n  ],\n  \"vehicles\": [\n    {\n      \"vehicleNumber\": \"string\",\n      \"vehicleType\": \"PICKUP\",\n      \"capacity\": 1,\n      \"driverName\": \"string\",\n      \"driverPhone\": \"9876543210\"\n    }\n  ],\n  \"serviceAreas\": [\n    {\n      \"district\": \"string\"\n    }\n  ],\n  \"location\": {\n    \"longitude\": 88.48,\n    \"latitude\": 22.72\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Matching",
+      "item": [
+        {
+          "name": "My supply and demand matches",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/matches/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "matches",
+                "my"
+              ],
+              "query": []
+            },
+            "description": "My supply and demand matches",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications?page&limit&sortOrder&channel&isRead",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "channel",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "isRead",
+                  "value": "true",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List notifications",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark all notifications read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications/read-all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "read-all"
+              ],
+              "query": []
+            },
+            "description": "Mark all notifications read",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark a notification read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications/{id}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "{id}",
+                "read"
+              ],
+              "query": []
+            },
+            "description": "Mark a notification read",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Conversations",
+      "item": [
+        {
+          "name": "Open a conversation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/conversations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "conversations"
+              ],
+              "query": []
+            },
+            "description": "Open a conversation",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"participantId\": \"674a1b2c3d4e5f6789012345\",\n  \"listingId\": \"674a1b2c3d4e5f6789012345\",\n  \"orderId\": \"674a1b2c3d4e5f6789012345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List conversations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/conversations?page&limit&sortOrder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "conversations"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List conversations",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/conversations/{id}/messages?page&limit&sortOrder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "conversations",
+                "{id}",
+                "messages"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List messages",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Send a message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/conversations/{id}/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "conversations",
+                "{id}",
+                "messages"
+              ],
+              "query": []
+            },
+            "description": "Send a message",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Mark a message read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/messages/{id}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "messages",
+                "{id}",
+                "read"
+              ],
+              "query": []
+            },
+            "description": "Mark a message read",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Disputes",
+      "item": [
+        {
+          "name": "Raise a dispute",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/disputes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "disputes"
+              ],
+              "query": []
+            },
+            "description": "Raise a dispute",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"674a1b2c3d4e5f6789012345\",\n  \"reason\": \"string\",\n  \"description\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List disputes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/disputes?page&limit&sortOrder&status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "disputes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List disputes",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get a dispute",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/disputes/{id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "disputes",
+                "{id}"
+              ],
+              "query": []
+            },
+            "description": "Get a dispute",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Resolve a dispute",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/disputes/{id}/resolve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "disputes",
+                "{id}",
+                "resolve"
+              ],
+              "query": []
+            },
+            "description": "Resolve a dispute",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"UNDER_REVIEW\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Upload a document",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/documents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "documents"
+              ],
+              "query": []
+            },
+            "description": "Upload a document",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"documentType\": \"AADHAAR\",\n  \"ownerType\": \"FARMER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List my documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/documents?page&limit&sortOrder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "documents"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List my documents",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Download a document",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/documents/{id}/download",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "documents",
+                "{id}",
+                "download"
+              ],
+              "query": []
+            },
+            "description": "Download a document",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Dashboard statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "dashboard"
+              ],
+              "query": []
+            },
+            "description": "Dashboard statistics",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/users?page&limit&sortOrder&role&q&status&sortBy&district&verificationStatus&businessType&action&entity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "verificationStatus",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "businessType",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "action",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "entity",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List farmers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/farmers?page&limit&sortOrder&role&q&status&sortBy&district&verificationStatus&businessType&action&entity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "farmers"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "verificationStatus",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "businessType",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "action",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "entity",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List farmers",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List buyers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/buyers?page&limit&sortOrder&role&q&status&sortBy&district&verificationStatus&businessType&action&entity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "buyers"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "verificationStatus",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "businessType",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "action",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "entity",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List buyers",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List FPOs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/fpos?page&limit&sortOrder&role&q&status&sortBy&district&verificationStatus&businessType&action&entity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "fpos"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "verificationStatus",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "businessType",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "action",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "entity",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List FPOs",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/listings?page&limit&sortOrder&role&q&status&sortBy&district&verificationStatus&businessType&action&entity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "listings"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "verificationStatus",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "businessType",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "action",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "entity",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List listings",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/orders?page&limit&sortOrder&role&q&status&sortBy&district&verificationStatus&businessType&action&entity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "verificationStatus",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "businessType",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "action",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "entity",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List orders",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/payments?page&limit&sortOrder&role&q&status&sortBy&district&verificationStatus&businessType&action&entity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "payments"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "verificationStatus",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "businessType",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "action",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "entity",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List payments",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List markets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/markets?page&limit&sortOrder&role&q&status&sortBy&district&verificationStatus&businessType&action&entity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "markets"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "verificationStatus",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "businessType",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "action",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "entity",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List markets",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List disputes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/disputes?page&limit&sortOrder&role&q&status&sortBy&district&verificationStatus&businessType&action&entity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "disputes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "verificationStatus",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "businessType",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "action",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "entity",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List disputes",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List audit logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/audit-logs?page&limit&sortOrder&role&q&status&sortBy&district&verificationStatus&businessType&action&entity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "audit-logs"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "q",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "district",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "verificationStatus",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "businessType",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "action",
+                  "value": "string",
+                  "disabled": true
+                },
+                {
+                  "key": "entity",
+                  "value": "string",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List audit logs",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Verify a farmer",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/farmers/{id}/verification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "farmers",
+                "{id}",
+                "verification"
+              ],
+              "query": []
+            },
+            "description": "Verify a farmer",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PENDING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Verify a buyer",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/buyers/{id}/verification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "buyers",
+                "{id}",
+                "verification"
+              ],
+              "query": []
+            },
+            "description": "Verify a buyer",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PENDING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Verify an FPO",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/fpos/{id}/verification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "fpos",
+                "{id}",
+                "verification"
+              ],
+              "query": []
+            },
+            "description": "Verify an FPO",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PENDING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Verify a transporter",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/transporters/{id}/verification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "transporters",
+                "{id}",
+                "verification"
+              ],
+              "query": []
+            },
+            "description": "Verify a transporter",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PENDING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Block or unblock a user",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/users/{id}/block",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "users",
+                "{id}",
+                "block"
+              ],
+              "query": []
+            },
+            "description": "Block or unblock a user",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isBlocked\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update user roles",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/users/{id}/roles",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "users",
+                "{id}",
+                "roles"
+              ],
+              "query": []
+            },
+            "description": "Update user roles",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roles\": [\n    \"SUPER_ADMIN\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
