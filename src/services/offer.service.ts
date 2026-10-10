@@ -37,7 +37,7 @@ export class OfferService {
   ) {
     if (!hasRole(actor, BUYER_ROLES)) throw new AuthorizationError('Only buyers can create offers');
     if (!actor.isPhoneVerified) throw new AuthorizationError('Verify your phone before making an offer');
-    const buyer = await this.buyers.findByUserId(actor.id);
+    const buyer = await this.buyers.verifyIfPending(actor.id);
     if (!buyer?.isVerified) throw new AuthorizationError('Only verified buyers can make offers');
     const listing = await this.listings.findById(listingId);
     if (!listing) throw new NotFoundError('Listing not found');

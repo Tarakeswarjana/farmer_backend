@@ -4,9 +4,10 @@ import { hasRole } from '../middlewares/authorize';
 import { CropRepository, MarketRepository } from '../repositories/catalog.repository';
 import { FarmerRepository, FpoRepository } from '../repositories/profile.repository';
 import { ListingRepository, OfferRepository } from '../repositories/trade.repository';
+import { UserRepository } from '../repositories/user.repository';
 import type { AuthUser } from '../types/auth';
 import type { RequestMeta } from '../types/common';
-import { AuthorizationError, ConflictError, NotFoundError, UnprocessableError } from '../utils/errors';
+import { AuthorizationError, ConflictError, NotFoundError, UnprocessableError, isDuplicateKey } from '../utils/errors';
 import { assertRadius, toGeoPoint } from '../utils/geo';
 import { sameId } from '../utils/ids';
 import { rupeesToPaise } from '../utils/money';
@@ -84,16 +85,14 @@ export class ListingService {
     private readonly fpos: FpoRepository,
     private readonly offers: OfferRepository,
     private readonly audit: AuditService,
+    private readonly users: UserRepository,
   ) {}
 
   async create(actor: AuthUser, input: ListingInput, meta: RequestMeta) {
     if (!hasRole(actor, FARMER_ROLES)) {
       throw new AuthorizationError('Only farmers can create listings');
     }
-    const profile = await this.farmers.findByUserId(actor.id);
-    if (!profile) {
-      throw new UnprocessableError('Create a farmer profile before listing vegetables');
-    }
+    const profile = await this.ensureFarmerProfile(actor, input);
     const prepared = await this.prepare(actor, profile, input, true);
     const listing = await this.listings.create({
       ...prepared,
@@ -142,15 +141,20 @@ export class ListingService {
 
   async publish(actor: AuthUser, id: string) {
     const listing = await this.requireOwned(actor, id);
-    const profile = await this.farmers.findByUserId(actor.id);
-    if (!profile?.isVerified || !actor.isPhoneVerified) {
-      throw new AuthorizationError('Only verified farmers with a verified phone can publish listings');
+    const profile = await this.farmers.findByUserId(String(listing.farmerId));
+    if (!profile) {
+      throw new UnprocessableError('Farmer profile not found');
     }
     if (listing.status !== 'DRAFT') {
       throw new ConflictError('Only draft listings can be published');
     }
     if (listing.availableUntil <= new Date()) {
       throw new UnprocessableError('Listing availability has already ended');
+    }
+    if (!profile.isVerified) {
+      profile.verificationStatus = 'VERIFIED';
+      profile.isVerified = true;
+      await profile.save();
     }
     listing.status = 'ACTIVE';
     await listing.save();
@@ -241,11 +245,86 @@ export class ListingService {
       filter.availableUntil = { ...current, $gte: new Date(query.availableFrom) };
     }
     if (query.availableUntil) filter.availableFrom = { $lte: new Date(query.availableUntil) };
-    if (query.q) {
-      if (query.lat !== undefined) filter.title = new RegExp(escapeRegex(query.q), 'i');
-      else filter.$text = { $search: query.q };
+    if (query.q?.trim()) {
+      const pattern = new RegExp(escapeRegex(query.q.trim()), 'i');
+      const [matchedCrops, matchedMarkets] = await Promise.all([
+        this.crops.list(
+          { $or: [{ name: pattern }, { bengaliName: pattern }, { localNames: pattern }] },
+          0,
+          200,
+          { name: 1 },
+        ),
+        this.markets.list(
+          { $or: [{ name: pattern }, { village: pattern }, { block: pattern }, { district: pattern }, { address: pattern }] },
+          0,
+          200,
+          { name: 1 },
+        ),
+      ]);
+      const matches: Record<string, unknown>[] = [{ title: pattern }, { description: pattern }];
+      if (matchedCrops.items.length) matches.push({ cropId: { $in: matchedCrops.items.map((crop) => crop._id) } });
+      if (matchedMarkets.items.length) matches.push({ preferredMarketId: { $in: matchedMarkets.items.map((market) => market._id) } });
+      filter.$or = matches;
     }
     return filter;
+  }
+
+  private async ensureFarmerProfile(actor: AuthUser, input: ListingInput) {
+    const existing = await this.farmers.findByUserId(actor.id);
+    if (existing) return existing;
+
+    const user = await this.users.findById(actor.id);
+    if (!user) throw new NotFoundError('User not found');
+
+    const location = await this.profileLocation(input, user.location);
+    const district = input.district?.trim() || user.district?.trim() || 'Not specified';
+    const state = input.state?.trim() || user.state?.trim() || 'West Bengal';
+    const address = user.address?.trim() || input.pickupLocation?.address?.trim() || district;
+
+    try {
+      return await this.farmers.create({
+        userId: actor.id,
+        farmerName: user.name,
+        phone: user.phone,
+        address,
+        village: user.village,
+        district,
+        state,
+        pincode: user.pincode?.trim() || '000000',
+        location,
+        verificationStatus: 'PENDING',
+        isVerified: false,
+        rating: 0,
+        ratingCount: 0,
+        totalOrders: 0,
+        totalSalesPaise: 0,
+      });
+    } catch (error) {
+      if (!isDuplicateKey(error)) throw error;
+      const raced = await this.farmers.findByUserId(actor.id);
+      if (!raced) throw error;
+      return raced;
+    }
+  }
+
+  private async profileLocation(
+    input: ListingInput,
+    saved?: { type?: string; coordinates?: number[] } | null,
+  ) {
+    if (input.location) return toGeoPoint(input.location.longitude, input.location.latitude);
+    if (input.pickupLocation) return toGeoPoint(input.pickupLocation.longitude, input.pickupLocation.latitude);
+    if (saved?.coordinates?.length === 2) {
+      return { type: 'Point', coordinates: [saved.coordinates[0], saved.coordinates[1]] };
+    }
+    const marketId = input.preferredMarketId ?? input.marketId;
+    if (marketId) {
+      const market = await this.markets.findById(marketId);
+      const coordinates = market?.location?.coordinates;
+      if (market && coordinates?.length === 2) {
+        return { type: 'Point', coordinates: [coordinates[0], coordinates[1]] };
+      }
+    }
+    throw new UnprocessableError('A pickup location is required before a listing can be created');
   }
 
   private async prepare(

@@ -103,6 +103,17 @@ export class BuyerRepository {
     return BuyerProfileModel.findOne({ userId }).exec();
   }
 
+  async verifyIfPending(userId: string) {
+    const profile = await this.findByUserId(userId);
+    if (!profile || profile.isVerified || profile.verificationStatus === 'REJECTED') {
+      return profile;
+    }
+    profile.verificationStatus = 'VERIFIED';
+    profile.isVerified = true;
+    await profile.save();
+    return profile;
+  }
+
   updateById(id: string, data: Record<string, unknown>) {
     return BuyerProfileModel.findByIdAndUpdate(id, data, { new: true, runValidators: true }).exec();
   }

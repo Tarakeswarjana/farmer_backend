@@ -69,7 +69,7 @@ export class OrderService {
     meta: RequestMeta,
   ) {
     this.assertBuyer(actor);
-    const buyer = await this.buyers.findByUserId(actor.id);
+    const buyer = await this.buyers.verifyIfPending(actor.id);
     if (!buyer?.isVerified) {
       throw new AuthorizationError('Only verified buyers can place orders');
     }

@@ -36,7 +36,7 @@ export class RequirementService {
 
   async create(actor: AuthUser, input: RequirementInput) {
     if (!hasRole(actor, BUYER_ROLES)) throw new AuthorizationError('Only buyers can post requirements');
-    const buyer = await this.buyers.findByUserId(actor.id);
+    const buyer = await this.buyers.verifyIfPending(actor.id);
     if (!buyer?.isVerified) throw new AuthorizationError('Only verified buyers can post requirements');
     if (!(await this.crops.findById(input.cropId))) throw new NotFoundError('Crop not found');
     if (input.marketId && !(await this.markets.findById(input.marketId))) throw new NotFoundError('Market not found');

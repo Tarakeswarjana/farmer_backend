@@ -9,8 +9,8 @@ export const objectIdSchema = z
 
 export const passwordSchema = z
   .string()
-  .min(8)
-  .max(72)
+  .min(8, 'Use at least 8 characters, with a letter and a number')
+  .max(72, 'Password is too long')
   .regex(/[A-Za-z]/, 'Password must include a letter')
   .regex(/\d/, 'Password must include a number')
   .openapi({ example: 'Farmer@123' });
@@ -286,7 +286,7 @@ export const registerBody = z
   .object({
     name: z.string().min(2).max(80).openapi({ example: 'Rabi Mondal' }),
     phone: phoneSchema,
-    email: z.string().email().optional(),
+    email: z.string().trim().email('Enter a valid email, or leave it blank').optional().or(z.literal('')),
     password: passwordSchema,
     role: z.enum(['FARMER', 'BUYER', 'TRADER', 'RETAILER', 'RESTAURANT', 'TRANSPORTER']).openapi({ example: 'FARMER' }),
   })

@@ -46,8 +46,9 @@ export class CropService {
     const admin = actor ? hasRole(actor, ADMIN_ROLES) : false;
     filter.isActive = admin && query.isActive !== undefined ? query.isActive : true;
     if (query.category) filter.category = query.category;
-    if (query.q) {
-      filter.name = new RegExp(escapeRegex(query.q), 'i');
+    if (query.q?.trim()) {
+      const pattern = new RegExp(escapeRegex(query.q.trim()), 'i');
+      filter.$or = [{ name: pattern }, { bengaliName: pattern }, { localNames: pattern }];
     }
     const sort = buildSort(query.sortBy, page.sortOrder, ['name', 'createdAt', 'category'], 'name');
     const result = await this.crops.list(filter, page.skip, page.limit, sort);
@@ -136,7 +137,10 @@ export class MarketService {
     if (!query.includeInactive) filter.isActive = true;
     if (query.district) filter.district = query.district;
     if (query.marketType) filter.marketType = query.marketType;
-    if (query.q) filter.name = new RegExp(escapeRegex(query.q), 'i');
+    if (query.q?.trim()) {
+      const pattern = new RegExp(escapeRegex(query.q.trim()), 'i');
+      filter.$or = [{ name: pattern }, { village: pattern }, { block: pattern }, { district: pattern }, { address: pattern }];
+    }
     const sort = buildSort(query.sortBy, page.sortOrder, ['name', 'createdAt', 'district'], 'name');
     const result = await this.markets.list(filter, page.skip, page.limit, sort);
     return { items: result.items.map((item) => presentMarket(item)), meta: buildMeta(page.page, page.limit, result.total) };

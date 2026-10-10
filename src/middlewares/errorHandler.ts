@@ -23,9 +23,10 @@ export function notFoundHandler(req: Request, res: Response): void {
 
 export function errorHandler(error: unknown, req: Request, res: Response, _next: NextFunction): void {
   if (error instanceof ZodError) {
+    const detail = error.issues.find((issue) => issue.message && issue.message !== 'Validation failed')?.message;
     res.status(400).json({
       success: false,
-      message: 'Validation failed',
+      message: detail || 'Validation failed',
       error: {
         code: 'VALIDATION_ERROR',
         details: error.issues.map((issue) => ({

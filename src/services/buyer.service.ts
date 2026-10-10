@@ -46,8 +46,8 @@ export class BuyerService {
     const profile = await this.buyers.create({
       ...this.toData(input),
       userId: actor.id,
-      verificationStatus: 'PENDING',
-      isVerified: false,
+      verificationStatus: 'VERIFIED',
+      isVerified: true,
       rating: 0,
       ratingCount: 0,
     });
